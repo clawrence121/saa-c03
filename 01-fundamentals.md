@@ -115,3 +115,143 @@ Connecting to EC2
 - Linux => SSH on port 22
 
 SSH connection uses an SSH Key Pair. AWS generates the pair when the instance is created, and you download and save the Private Key to connect to the instance. The Public key is placed on the instance to connect.
+
+## S3
+
+Public service, global platform
+
+Data is stored in a single region at rest, all az in a region
+
+Perfect for large dataset and files
+
+Very economical, lots of ways to access files
+
+Objects are the data, Bucket are the containers for objects
+
+Objects are pretty much files, keys are like the name, value is the binary data for the object, can be between 0b to 5tb
+
+Buckets are created in a single region, and the data is primary for that region, and the blast radius for that data is that region
+
+bucket name has to be GLOBALLY unique, 3-63 chars, all lower casde, no underscore, can't be ip formatted
+
+Unlimited number of objects, unlimited size
+
+Flat structure, there are actually no folders, but they can be represented with prefixes
+
+soft limit of 100 buckets, hard limit of 1000 buckets
+
+Good for accessing whole files, can't be mounted as a filesystem (block storage)
+
+Should be the default for INPUT and OUTPUT for most services
+
+# Cloudformation
+
+IaC templates in YAML or JSON for resources
+
+All templates have a set of resources and is the only required part of the template
+
+The description MUST directly follow the template format version
+
+Metadata can control the UI for the template like ordering
+
+Parameters are like variables for the user to add
+
+Mappings allow you to create KV lookups
+
+Conditions are like IF functions within a template
+
+Outputs are a way to pass data back to users
+
+A single resource is known as a Logical Resource, they are created within a Stack
+
+For every Logical Resource within a Stack, a Physical Resource is created
+
+When updating a Stack, the same actions are done to the Physical Resources
+
+# Cloudwatch
+
+Collects and manages operational data
+
+Public service and can be oushed to from anywhere
+
+Metrics, some resources send by default eg ec2 cpu, others need to be pushed from the cloudwatch agent
+
+Logs, eg app logs
+
+Events, aws services can generate events to listen to, or send events on a cron
+
+Cloudwatch uses namespaces for data, eg AWS/EC2, aws namespace is reserved
+
+Metrics are for data in a time order, the metric is the type eg CPU UTIL, then has a Dimension to identify it
+
+A data point has a Timestamp and a Value
+
+Dimensions are name value pairs for aws to separate the metrics
+
+Alarms are linked to a specific metric, and can either ne OK or ALARM, where an action can be taken, eg send to SNS topic
+
+# Shared Responsibility Model
+
+AWS making it clear who manages what with security
+
+AWS manages the security OF the cloud, software, compute, storage, hardware
+
+YOU manae the security IN the cloud, data encryotion, networking and firewall, customer data, platform access management
+
+# High-Availability vs Fault-Tolerance vs Disaster Recovery
+
+HA aims to ensure a level of performance, usually uptime, for a higher than normal period
+
+HA is not about user experience, it's about maximising the operational performance
+
+Usually represented by 99.999% etc
+
+With HA you can switch out compute with automation, user disrution is OK as it's overall uptime that is important
+
+HA has costs to implement and manage
+
+FT property of a system that enables it to continue operating in the event of a failure of one or more of its components
+
+FT works through failure with no distruption to users
+
+EG communicating to multiple servers at the same time to allow for the failure of a node
+
+A plane is very FT as it needs to keep running until it can land and make repairs
+
+DR is a set of policies tools or procedures to enable the recovery of continuation of vital tech following a natural or human induced disaster
+
+EG having a spare backup location that is ready to go
+
+Taking regular backups, and storing them offsite with logins, run testing
+
+# Route53
+
+Register domains and host zones, aka managed nameservers
+
+Globall resilient and a global service
+
+Route53 connects to all the domain registers
+
+A zone file is a file for all the dns records for the domain, and shares that with nameservers via Nameserver Records (NS)
+
+Hosted Zones are zone files hosted on aws managed nameservers
+
+Can be public, or can be private and linked to a VPC
+
+When you create a new hosted zone, it will be allocated 4 random aws nameservers, which need to be registered against the domain
+
+# DNS Record Type
+
+The .com zone (eg for amazon.com) contains NS records that point to the dns records for the amazon.com zone
+
+A and AAAA records map hostnames to IP addresses, A is ipv4, AAAA is ipv6
+
+CNAME records are similar to dns shortcuts, CNAMEs can app point to a single A record to then map to the IP address, CANME cannot point to an IP address
+
+MX records are for email mostly, A to the ip for the mail server, MX points to the host within a zone, or a full domain outside the zone, can have a priority, lower is better
+
+TXT records allow you to add arbitrary information to a domain, can be used to prove ownership of a zone and domain
+
+DNS TTL is a value in seconds for dns cache, if you make changes you will likely need to wait for the ttl to expire for changes to roll out
+
+Authoritative answers are from the hosted server, non-authoritative answers are the cached values
